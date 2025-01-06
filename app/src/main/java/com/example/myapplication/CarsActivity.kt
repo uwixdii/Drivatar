@@ -24,7 +24,7 @@ class CarsActivity : AppCompatActivity() {
 
         // Настройка списка машин
         val carsList = listOf(
-            Car("Toyota Camry", "2020", "$50/day"),
+            Car("Toyota Camry", "2020", "$50/day"), // 1
             Car("BMW X5", "2022", "$100/day"),
             Car("Tesla Model 3", "2021", "$120/day")
         )
