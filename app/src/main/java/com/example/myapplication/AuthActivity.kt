@@ -24,6 +24,15 @@ class AuthActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
 
+        // Проверяем, авторизован ли пользователь
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            // Пользователь уже авторизован, перенаправляем его в CarsActivity
+            startActivity(Intent(this, CarsActivity::class.java))
+            finish() // Закрываем экран авторизации
+        }
+
+        // Настраиваем кнопку входа
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
@@ -40,10 +49,15 @@ class AuthActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    // Успешный вход, перенаправляем в CarsActivity
                     startActivity(Intent(this, CarsActivity::class.java))
-                    finish()
+                    finish() // Закрываем экран авторизации
                 } else {
-                    Toast.makeText(this, "Authentication failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Authentication failed: ${task.exception?.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="cars_list">Cars List</string>
+    <string name="logout">Выход</string>
 </resources>
