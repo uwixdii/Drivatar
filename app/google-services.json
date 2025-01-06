@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "774602478250",
+    "firebase_url": "https://cararenda-2b31d-default-rtdb.firebaseio.com",
+    "project_id": "cararenda-2b31d",
+    "storage_bucket": "cararenda-2b31d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774602478250:android:9df3cd1f98105aee1b76d3",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRS5RHJ2I44vJD0RV_ZdkYlPVJ65c8MM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
