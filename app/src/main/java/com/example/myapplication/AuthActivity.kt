@@ -12,7 +12,7 @@ class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding // Денис Котик
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseDatabase
+    private lateinit var database: FirebaseDatabase // Гриша вареник
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
