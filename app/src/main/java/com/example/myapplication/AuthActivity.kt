@@ -10,7 +10,7 @@ import com.example.myapplication.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAuthBinding
+    private lateinit var binding: ActivityAuthBinding // Денис Котик
     private lateinit var auth: FirebaseAuth
     private lateinit var database: FirebaseDatabase
 
