@@ -10,9 +10,9 @@ import com.example.myapplication.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAuthBinding // Денис Котик
+    private lateinit var binding: ActivityAuthBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseDatabase // Гриша вареник
+    private lateinit var database: FirebaseDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
