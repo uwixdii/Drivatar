@@ -8,5 +8,7 @@ data class Car(
     var reservedBy: String? = null,
     val mileage: String = "",
     val color: String = "",
-    val isAvailable: Boolean = true
+    val isAvailable: Boolean = true,
+    val hidden: Boolean = false
+
 )
