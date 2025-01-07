@@ -10,25 +10,54 @@
         android:id="@+id/tvCarName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Car Name"
+        android:text="Название машины"
         android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvCarYear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Car Year"/>
+        android:text="Год: 2022" />
 
     <TextView
         android:id="@+id/tvCarPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Car Price"/>
+        android:text="Цена: 100 $" />
 
     <TextView
-        android:id="@+id/tvReservedBy"
+        android:id="@+id/tvCarColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reserved By"/>
+        android:text="Цвет: Красный" />
+
+    <TextView
+        android:id="@+id/tvCarMileage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Пробег: 15000 км" />
+
+    <!-- Кнопка "Подробнее" -->
+    <Button
+        android:id="@+id/btnDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Подробнее" />
+
+    <!-- Кнопка "Забронировать" -->
+    <Button
+        android:id="@+id/btnBook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Забронировать"
+        android:visibility="gone" />
+
+    <!-- Кнопка "Отменить бронирование" -->
+    <Button
+        android:id="@+id/btnCancelReservation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Отменить бронирование"
+        android:visibility="gone" />
 </LinearLayout>

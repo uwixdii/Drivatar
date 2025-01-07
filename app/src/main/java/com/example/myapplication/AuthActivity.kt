@@ -17,23 +17,26 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Инициализация ViewBinding
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("Users")
 
-        // Обработчик кнопки входа
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val password = binding.etPassword.text.toString().trim()
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(email, password)
-            } else {
-                Toast.makeText(this, "Пожалуйста, заполните оба поля", Toast.LENGTH_SHORT).show()
+            if (email.isEmpty()) {
+                binding.etEmail.error = "Введите email"
+                return@setOnClickListener
             }
+            if (password.isEmpty()) {
+                binding.etPassword.error = "Введите пароль"
+                return@setOnClickListener
+            }
+
+            loginUser(email, password)
         }
     }
 
@@ -41,41 +44,31 @@ class AuthActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid ?: ""
+                    val user = auth.currentUser
+                    if (user == null) {
+                        Toast.makeText(this, "Ошибка: Пользователь не авторизован", Toast.LENGTH_SHORT).show()
+                        return@addOnCompleteListener
+                    }
 
-                    // Проверяем роль пользователя в базе данных
+                    val userId = user.uid
                     database.child(userId).child("role").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(snapshot: DataSnapshot) {
                             val role = snapshot.getValue(String::class.java)
+                            if (role.isNullOrEmpty()) {
+                                Toast.makeText(this@AuthActivity, "Ошибка: Роль пользователя не определена", Toast.LENGTH_SHORT).show()
+                                return
+                            }
 
-                            // Проверяем, является ли пользователь администратором
                             if (role == "admin") {
-                                Toast.makeText(this@AuthActivity, "Вы вошли как администратор", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this@AuthActivity, CarsActivity::class.java)
-                                intent.putExtra("isAdmin", true) // Передаём флаг в CarsActivity
-                                startActivity(intent)
+                                startActivity(Intent(this@AuthActivity, AdminsActivity::class.java))
                             } else {
-                                // Получаем имя пользователя из базы данных
-                                database.child(userId).child("name").addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        val name = snapshot.getValue(String::class.java) ?: "Пользователь"
-                                        Toast.makeText(this@AuthActivity, "Добро пожаловать, $name", Toast.LENGTH_SHORT).show()
-
-                                        val intent = Intent(this@AuthActivity, CarsActivity::class.java)
-                                        intent.putExtra("isAdmin", false) // Передаём флаг в CarsActivity
-                                        startActivity(intent)
-                                    }
-
-                                    override fun onCancelled(error: DatabaseError) {
-                                        Toast.makeText(this@AuthActivity, "Ошибка получения данных пользователя: ${error.message}", Toast.LENGTH_SHORT).show()
-                                    }
-                                })
+                                startActivity(Intent(this@AuthActivity, CarsActivity::class.java))
                             }
                             finish()
                         }
 
                         override fun onCancelled(error: DatabaseError) {
-                            Toast.makeText(this@AuthActivity, "Ошибка получения данных пользователя: ${error.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@AuthActivity, "Ошибка базы данных: ${error.message}", Toast.LENGTH_LONG).show()
                         }
                     })
                 } else {

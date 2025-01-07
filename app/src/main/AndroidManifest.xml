@@ -16,8 +16,12 @@
         <activity android:name=".AuthActivity" />
         <activity android:name=".CarsActivity" />
         <activity android:name=".CarDetailsActivity" />
-        <activity android:name=".DatabaseManagementActivity" />
-        <activity android:name=".BookingsActivity" />
+        <activity android:name=".AdminsActivity" />
+        <activity android:name=".AddCarActivity" />
+        <activity android:name=".AvailableCarsActivity" />
+        <activity android:name=".ManageUsersActivity" />
+        <activity android:name=".ReservedCarsActivity" />
+        <activity android:name=".UserDetailsActivity" />
         <activity
             android:name=".MainActivity"
 

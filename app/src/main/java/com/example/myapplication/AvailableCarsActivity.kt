@@ -7,28 +7,27 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.adapters.CarsAdapter
-import com.example.myapplication.databinding.ActivityCarsBinding
+import com.example.myapplication.databinding.ActivityAvailableCarsBinding
 import com.example.myapplication.models.Car
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class CarsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityCarsBinding
-    private lateinit var auth: FirebaseAuth
+class AvailableCarsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityAvailableCarsBinding
     private lateinit var database: DatabaseReference
-    private val carsList = mutableListOf<Car>()
+    private val availableCarsList = mutableListOf<Car>()
     private lateinit var adapter: CarsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityCarsBinding.inflate(layoutInflater)
+        binding = ActivityAvailableCarsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("cars")
 
         adapter = CarsAdapter(
-            carsList,
+            availableCarsList,
             onDetailsClick = { car ->
                 openCarDetails(car)
             },
@@ -41,28 +40,24 @@ class CarsActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
-        binding.btnLogout.setOnClickListener {
-            logout()
-        }
-
-        loadCarsFromDatabase()
+        loadAvailableCars()
     }
 
-    private fun loadCarsFromDatabase() {
+    private fun loadAvailableCars() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                carsList.clear()
+                availableCarsList.clear()
                 for (carSnapshot in snapshot.children) {
                     val car = carSnapshot.getValue(Car::class.java)
                     if (car != null && car.reservedBy == null) {
-                        carsList.add(car)
+                        availableCarsList.add(car)
                     }
                 }
                 adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("CarsActivity", "Failed to load cars: ${error.message}")
+                Log.e("AvailableCarsActivity", "Failed to load cars: ${error.message}")
             }
         })
     }
@@ -74,30 +69,20 @@ class CarsActivity : AppCompatActivity() {
     }
 
     private fun bookCar(car: Car) {
-        val currentUserId = auth.currentUser?.uid
-        if (currentUserId != null) {
-            car.id?.let { carId ->
-                database.child(carId).child("reservedBy").setValue(currentUserId)
-                    .addOnSuccessListener {
-                        Toast.makeText(this, "Машина успешно забронирована!", Toast.LENGTH_SHORT).show()
-                        loadCarsFromDatabase() // Обновить список
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Ошибка бронирования: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-            } ?: run {
-                Toast.makeText(this, "ID машины отсутствует!", Toast.LENGTH_SHORT).show()
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        val carId = car.id ?: return // Выход, если id машины равен null
+        val userId = currentUserId ?: return // Выход, если пользователь не авторизован
+
+        database.child(carId).child("reservedBy").setValue(userId)
+            .addOnSuccessListener {
+                showToast("Машина успешно забронирована!")
             }
-        } else {
-            Toast.makeText(this, "Не удалось получить данные пользователя", Toast.LENGTH_SHORT).show()
-        }
+            .addOnFailureListener { error ->
+                showToast("Ошибка бронирования: ${error.message}")
+            }
     }
 
-    private fun logout() {
-        auth.signOut()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

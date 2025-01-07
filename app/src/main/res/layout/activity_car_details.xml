@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -9,7 +10,7 @@
         android:id="@+id/tvCarName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Название машины"
+        android:text="Имя машины"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -17,27 +18,29 @@
         android:id="@+id/tvCarYear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Год выпуска"
-        android:textSize="16sp" />
+        android:text="Год выпуска" />
 
     <TextView
         android:id="@+id/tvCarPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Цена"
-        android:textSize="16sp" />
+        android:text="Цена" />
+
+    <TextView
+        android:id="@+id/tvCarColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Цвет" />
+
+    <TextView
+        android:id="@+id/tvCarMileage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Пробег" />
 
     <TextView
         android:id="@+id/tvReservedBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Статус"
-        android:textSize="16sp"
-        android:textColor="@android:color/holo_red_dark" />
-
-    <Button
-        android:id="@+id/btnReserve"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Забронировать" />
+        android:text="Забронировано:" />
 </LinearLayout>

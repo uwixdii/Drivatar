@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/etCarName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Название машины"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etCarYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Год выпуска"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/etCarPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Цена"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/etCarColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Цвет машины"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etCarMileage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Пробег (км)"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/btnAddCar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Добавить машину" />
+    </LinearLayout>
+</ScrollView>
