@@ -15,19 +15,22 @@
         android:title="@string/cars_list"
         android:titleTextColor="@android:color/white" />
 
-    <!-- RecyclerView для списка машин -->
+    <Button
+        android:id="@+id/btnManageDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Manage Database" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="16dp" />
+        android:layout_height="match_parent" />
 
-    <!-- Кнопка "Выход" -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/logout"
-        android:layout_marginTop="16dp" />
 </LinearLayout>

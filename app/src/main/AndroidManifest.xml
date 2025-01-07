@@ -15,7 +15,9 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".AuthActivity" />
         <activity android:name=".CarsActivity" />
-
+        <activity android:name=".CarDetailsActivity" />
+        <activity android:name=".DatabaseManagementActivity" />
+        <activity android:name=".BookingsActivity" />
         <activity
             android:name=".MainActivity"
 

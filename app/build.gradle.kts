@@ -59,7 +59,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1") // Для управления жизненным циклом
     implementation("androidx.navigation:navigation-fragment-ktx:2.6.0") // Для навигации
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
     implementation(libs.firebase.database.ktx)
+
     implementation(libs.firebase.firestore.ktx)
 
     // Тестирование

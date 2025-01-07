@@ -4,15 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import com.example.myapplication.databinding.ActivityAuthBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseDatabase
+    private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,25 +22,17 @@ class AuthActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance()
+        database = FirebaseDatabase.getInstance().getReference("Users")
 
-        // Проверяем, авторизован ли пользователь
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            // Пользователь уже авторизован, перенаправляем его в CarsActivity
-            startActivity(Intent(this, CarsActivity::class.java))
-            finish() // Закрываем экран авторизации
-        }
-
-        // Настраиваем кнопку входа
+        // Обработчик кнопки входа
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 loginUser(email, password)
             } else {
-                Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Пожалуйста, заполните оба поля", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -49,15 +41,45 @@ class AuthActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Успешный вход, перенаправляем в CarsActivity
-                    startActivity(Intent(this, CarsActivity::class.java))
-                    finish() // Закрываем экран авторизации
+                    val userId = auth.currentUser?.uid ?: ""
+
+                    // Проверяем роль пользователя в базе данных
+                    database.child(userId).child("role").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            val role = snapshot.getValue(String::class.java)
+
+                            // Проверяем, является ли пользователь администратором
+                            if (role == "admin") {
+                                Toast.makeText(this@AuthActivity, "Вы вошли как администратор", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@AuthActivity, CarsActivity::class.java)
+                                intent.putExtra("isAdmin", true) // Передаём флаг в CarsActivity
+                                startActivity(intent)
+                            } else {
+                                // Получаем имя пользователя из базы данных
+                                database.child(userId).child("name").addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        val name = snapshot.getValue(String::class.java) ?: "Пользователь"
+                                        Toast.makeText(this@AuthActivity, "Добро пожаловать, $name", Toast.LENGTH_SHORT).show()
+
+                                        val intent = Intent(this@AuthActivity, CarsActivity::class.java)
+                                        intent.putExtra("isAdmin", false) // Передаём флаг в CarsActivity
+                                        startActivity(intent)
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Toast.makeText(this@AuthActivity, "Ошибка получения данных пользователя: ${error.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                })
+                            }
+                            finish()
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            Toast.makeText(this@AuthActivity, "Ошибка получения данных пользователя: ${error.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    })
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Authentication failed: ${task.exception?.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Ошибка авторизации: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }

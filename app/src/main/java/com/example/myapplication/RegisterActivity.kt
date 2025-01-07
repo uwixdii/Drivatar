@@ -8,8 +8,6 @@ import android.text.SpannableString
 import android.text.TextWatcher
 import android.text.style.ForegroundColorSpan
 import android.util.Patterns
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityRegisterBinding
@@ -72,7 +70,8 @@ class RegisterActivity : AppCompatActivity() {
                         val userId = auth.currentUser?.uid ?: ""
                         val user = mapOf(
                             "name" to name,
-                            "email" to email
+                            "email" to email,
+                            "role" to "user" // Добавляем роль "user" по умолчанию
                         )
 
                         // Сохранение данных в Realtime Database
@@ -84,7 +83,6 @@ class RegisterActivity : AppCompatActivity() {
                                     startActivity(intent)
                                     finish()
                                 } else {
-                                    // Добавляем дополнительную обработку ошибки записи
                                     Toast.makeText(this, "Ошибка записи в базу данных: ${dbTask.exception?.message}", Toast.LENGTH_SHORT).show()
                                 }
                             }
