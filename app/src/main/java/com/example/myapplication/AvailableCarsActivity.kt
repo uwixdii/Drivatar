@@ -18,6 +18,7 @@ class AvailableCarsActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private val availableCarsList = mutableListOf<Car>()
     private lateinit var adapter: CarsAdapter
+    private var isAdmin: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,20 +27,25 @@ class AvailableCarsActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance().getReference("cars")
 
+        // Определяем, является ли текущий пользователь администратором
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        isAdmin = currentUserId == "adminUserId" // Укажите реальный ID администратора
+
+        // Инициализируем адаптер
         adapter = CarsAdapter(
-            availableCarsList,
-            onDetailsClick = { car ->
-                openCarDetails(car)
-            },
-            onBookClick = { car ->
-                bookCar(car)
-            },
-            onCancelReservationClick = { /* Ничего не делаем */ }
+            carsList = availableCarsList,
+            isAdmin = isAdmin,
+            onDetailsClick = { car -> openCarDetails(car) },
+            onBookClick = { car -> bookCar(car) },
+            onCancelReservationClick = { car -> cancelReservation(car) },
+            onHideClick = { car -> hideCar(car) },
+            onDeleteClick = { car -> deleteCar(car) }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
+        // Загружаем доступные автомобили
         loadAvailableCars()
     }
 
@@ -49,7 +55,8 @@ class AvailableCarsActivity : AppCompatActivity() {
                 availableCarsList.clear()
                 for (carSnapshot in snapshot.children) {
                     val car = carSnapshot.getValue(Car::class.java)
-                    if (car != null && car.reservedBy == null) {
+                    // Исключаем машины, которые забронированы
+                    if (car != null && car.isHidden != true && car.reservedBy == null) {
                         availableCarsList.add(car)
                     }
                 }
@@ -57,10 +64,11 @@ class AvailableCarsActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("AvailableCarsActivity", "Failed to load cars: ${error.message}")
+                Log.e("AvailableCarsActivity", "Ошибка загрузки машин: ${error.message}")
             }
         })
     }
+
 
     private fun openCarDetails(car: Car) {
         val intent = Intent(this, CarDetailsActivity::class.java)
@@ -70,15 +78,56 @@ class AvailableCarsActivity : AppCompatActivity() {
 
     private fun bookCar(car: Car) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
-        val carId = car.id ?: return // Выход, если id машины равен null
-        val userId = currentUserId ?: return // Выход, если пользователь не авторизован
+        val carId = car.id ?: return
+        val userId = currentUserId ?: return
 
         database.child(carId).child("reservedBy").setValue(userId)
             .addOnSuccessListener {
                 showToast("Машина успешно забронирована!")
+                loadAvailableCars() // Обновляем список машин
             }
             .addOnFailureListener { error ->
                 showToast("Ошибка бронирования: ${error.message}")
+            }
+    }
+
+
+    private fun cancelReservation(car: Car) {
+        val carId = car.id ?: return
+
+        database.child(carId).child("reservedBy").setValue(null)
+            .addOnSuccessListener {
+                showToast("Бронирование отменено!")
+                loadAvailableCars() // Обновляем список
+            }
+            .addOnFailureListener { error ->
+                showToast("Ошибка отмены бронирования: ${error.message}")
+            }
+    }
+
+    private fun hideCar(car: Car) {
+        val carId = car.id ?: return
+
+        database.child(carId).child("isHidden").setValue(true)
+            .addOnSuccessListener {
+                showToast("Машина успешно скрыта!")
+                loadAvailableCars() // Обновляем список
+            }
+            .addOnFailureListener { error ->
+                showToast("Ошибка скрытия машины: ${error.message}")
+            }
+    }
+
+    private fun deleteCar(car: Car) {
+        val carId = car.id ?: return
+
+        database.child(carId).removeValue()
+            .addOnSuccessListener {
+                showToast("Машина успешно удалена!")
+                loadAvailableCars() // Обновляем список
+            }
+            .addOnFailureListener { error ->
+                showToast("Ошибка удаления машины: ${error.message}")
             }
     }
 

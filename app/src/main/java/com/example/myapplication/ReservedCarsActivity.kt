@@ -24,11 +24,15 @@ class ReservedCarsActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance().getReference("cars")
 
+        // Инициализируем адаптер с передачей необходимых параметров
         adapter = CarsAdapter(
-            reservedCarsList,
+            carsList = reservedCarsList,
+            isAdmin = false, // Устанавливаем false, так как на этом экране пользователь — не администратор
             onDetailsClick = { car -> openCarDetails(car) },
             onBookClick = { /* Ничего не делаем */ },
-            onCancelReservationClick = { car -> cancelReservation(car) } // Передаем обработчик
+            onCancelReservationClick = { car -> cancelReservation(car) },
+            onHideClick = { /* Ничего не делаем */ },
+            onDeleteClick = { /* Ничего не делаем */ }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)

@@ -28,10 +28,13 @@ class MyReservationsActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance().getReference("cars")
 
         adapter = CarsAdapter(
-            reservedCarsList,
+            carsList = reservedCarsList,
+            isAdmin = false, // Для MyReservationsActivity предполагаем, что пользователь не администратор
             onDetailsClick = { car -> openCarDetails(car) },
             onBookClick = { /* Ничего не делаем */ },
-            onCancelReservationClick = { car -> cancelReservation(car) }
+            onCancelReservationClick = { car -> cancelReservation(car) },
+            onHideClick = { /* Ничего не делаем */ },
+            onDeleteClick = { /* Ничего не делаем */ }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,29 +8,30 @@
         android:id="@+id/tvUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Имя пользователя" />
+        android:text="User Name" />
 
     <TextView
         android:id="@+id/tvUserEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Email пользователя" />
+        android:text="User Email" />
 
-    <Button
-        android:id="@+id/btnMakeAdmin"
+    <TextView
+        android:id="@+id/tvUserRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Назначить администратором" />
+        android:text="User Role" />
 
     <Button
-        android:id="@+id/btnViewReservations"
+        android:id="@+id/btnAssignAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Посмотреть бронирования" />
+        android:text="Assign Admin" />
 
     <Button
         android:id="@+id/btnDeleteUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Удалить пользователя" />
+        android:text="Delete User" />
+
 </LinearLayout>

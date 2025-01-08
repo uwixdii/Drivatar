@@ -1,62 +1,61 @@
-package com.example.myapplication.adapters
+    package com.example.myapplication.adapters
 
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.databinding.ItemCarBinding
-import com.example.myapplication.models.Car
+    import android.view.LayoutInflater
+    import android.view.View
+    import android.view.ViewGroup
+    import androidx.recyclerview.widget.RecyclerView
+    import com.example.myapplication.databinding.ItemCarBinding
+    import com.example.myapplication.models.Car
+    import com.google.firebase.auth.FirebaseAuth
 
-class CarsAdapter(
-    private val carsList: List<Car>,
-    private val onDetailsClick: (Car) -> Unit,
-    private val onBookClick: (Car) -> Unit,
-    private val onCancelReservationClick: (Car) -> Unit // Новый обработчик для отмены бронирования
-) : RecyclerView.Adapter<CarsAdapter.CarViewHolder>() {
+    class CarsAdapter(
+        private val carsList: MutableList<Car>,
+        private val isAdmin: Boolean = false,
+        private val onDetailsClick: (Car) -> Unit,
+        private val onBookClick: (Car) -> Unit,
+        private val onCancelReservationClick: (Car) -> Unit,
+        private val onHideClick: (Car) -> Unit,
+        private val onDeleteClick: (Car) -> Unit
+    ) : RecyclerView.Adapter<CarsAdapter.CarViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarViewHolder {
-        val binding = ItemCarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CarViewHolder(binding)
-    }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarViewHolder {
+            val binding = ItemCarBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return CarViewHolder(binding)
+        }
 
-    override fun onBindViewHolder(holder: CarViewHolder, position: Int) {
-        val car = carsList[position]
-        holder.bind(car)
-    }
+        override fun onBindViewHolder(holder: CarViewHolder, position: Int) {
+            val car = carsList[position]
+            holder.bind(car)
+        }
 
-    override fun getItemCount(): Int = carsList.size
+        override fun getItemCount(): Int = carsList.size
 
-    inner class CarViewHolder(private val binding: ItemCarBinding) : RecyclerView.ViewHolder(binding.root) {
+        inner class CarViewHolder(private val binding: ItemCarBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(car: Car) {
-            binding.tvCarName.text = car.name
-            binding.tvCarYear.text = "Год: ${car.year}"
-            binding.tvCarPrice.text = "Цена: ${car.price} $"
-            binding.tvCarColor.text = "Цвет: ${car.color}"
-            binding.tvCarMileage.text = "Пробег: ${car.mileage} км"
+            fun bind(car: Car) {
+                binding.carName.text = car.name
+                binding.carYear.text = "Год: ${car.year}"
+                binding.carPrice.text = "Цена: ${car.price} $"
+                binding.carColor.text = "Цвет: ${car.color}"
+                binding.carMileage.text = "Пробег: ${car.mileage} км"
 
-            if (car.reservedBy.isNullOrEmpty()) {
-                // Машина не забронирована
-                binding.btnBook.visibility = View.VISIBLE
-                binding.btnCancelReservation.visibility = View.GONE
-                binding.btnBook.text = "Забронировать"
-                binding.btnBook.setOnClickListener {
-                    onBookClick(car)
+                // Логика для кнопок
+                binding.detailsButton.setOnClickListener {
+                    onDetailsClick(car)
                 }
-            } else {
-                // Машина забронирована
-                binding.btnBook.visibility = View.GONE
-                binding.btnCancelReservation.visibility = View.VISIBLE
-                binding.btnCancelReservation.text = "Отменить бронирование"
-                binding.btnCancelReservation.setOnClickListener {
-                    onCancelReservationClick(car)
-                }
-            }
 
-            // Кнопка "Подробнее"
-            binding.btnDetails.setOnClickListener {
-                onDetailsClick(car)
+                // Кнопка "Забронировать" только если машина не забронирована
+                if (car.reservedBy == null) {
+                    binding.bookButton.visibility = View.VISIBLE
+                    binding.bookButton.setOnClickListener {
+                        onBookClick(car)
+                    }
+                } else {
+                    binding.bookButton.visibility = View.GONE
+                }
+
+                // Убираем кнопку "Отменить бронирование" из адаптера
+                binding.cancelReservationButton.visibility = View.GONE
             }
         }
     }
-}

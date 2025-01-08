@@ -18,6 +18,7 @@ class CarsActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private val carsList = mutableListOf<Car>()
     private lateinit var adapter: CarsAdapter
+    private var isAdmin: Boolean = false // Флаг для проверки администратора
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,15 +28,19 @@ class CarsActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("cars")
 
+        // Определяем, является ли текущий пользователь администратором
+        val currentUserId = auth.currentUser?.uid
+        isAdmin = currentUserId == "adminUserId" // Замените "adminUserId" на реальный ID администратора
+
+        // Инициализируем адаптер с дополнительными параметрами
         adapter = CarsAdapter(
             carsList,
-            onDetailsClick = { car ->
-                openCarDetails(car)
-            },
-            onBookClick = { car ->
-                bookCar(car)
-            },
-            onCancelReservationClick = { /* Ничего не делаем */ }
+            isAdmin = isAdmin, // Передаем флаг для проверки администратора
+            onDetailsClick = { car -> openCarDetails(car) },
+            onBookClick = { car -> bookCar(car) },
+            onCancelReservationClick = { /* Ничего не делаем для обычных пользователей */ },
+            onHideClick = { car -> hideCar(car) }, // Обработчик для скрытия машины
+            onDeleteClick = { car -> deleteCar(car) } // Обработчик для удаления машины
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -90,6 +95,36 @@ class CarsActivity : AppCompatActivity() {
             }
         } else {
             Toast.makeText(this, "Не удалось получить данные пользователя", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun hideCar(car: Car) {
+        val carId = car.id ?: return
+
+        // Если это администратор, скрыть машину
+        if (isAdmin) {
+            database.child(carId).child("isHidden").setValue(true)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Машина скрыта!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Ошибка скрытия: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun deleteCar(car: Car) {
+        val carId = car.id ?: return
+
+        // Если это администратор, удалить машину
+        if (isAdmin) {
+            database.child(carId).removeValue()
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Машина удалена!", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Ошибка удаления: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 

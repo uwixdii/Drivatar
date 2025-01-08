@@ -29,8 +29,8 @@ class EditCarActivity : AppCompatActivity() {
             val car = snapshot.getValue(Car::class.java)
             if (car != null) {
                 binding.etCarName.setText(car.name)
-                binding.etCarYear.setText(car.year)
-                binding.etCarPrice.setText(car.price)
+                binding.etCarYear.setText(car.year.toString()) // Convert year to String
+                binding.etCarPrice.setText(car.price.toString()) // Convert price to String
             } else {
                 Toast.makeText(this, "Машина не найдена", Toast.LENGTH_SHORT).show()
                 finish()

@@ -41,21 +41,28 @@ class ManageUsersActivity : AppCompatActivity() {
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 userList.clear()
-                for (userSnapshot in snapshot.children) {
-                    val user = userSnapshot.getValue(User::class.java)
-                    if (user != null) {
-                        userList.add(user.copy(id = userSnapshot.key ?: ""))
+                if (snapshot.exists()) {
+                    for (userSnapshot in snapshot.children) {
+                        val user = userSnapshot.getValue(User::class.java)
+                        if (user != null) {
+                            userList.add(user.copy(id = userSnapshot.key ?: ""))
+                        }
                     }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(this@ManageUsersActivity, "Список пользователей пуст", Toast.LENGTH_SHORT).show()
                 }
-                adapter.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ManageUsersActivity, "Ошибка загрузки данных: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ManageUsersActivity,
+                    "Ошибка загрузки данных пользователей: ${error.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
-
     private fun openUserDetails(user: User) {
         val intent = Intent(this, UserDetailsActivity::class.java)
         intent.putExtra("userId", user.id)

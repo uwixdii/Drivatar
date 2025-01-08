@@ -1,10 +1,12 @@
 package com.example.myapplication
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityCarDetailsBinding
 import com.example.myapplication.models.Car
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 class CarDetailsActivity : AppCompatActivity() {
@@ -13,6 +15,7 @@ class CarDetailsActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private var carId: String? = null
     private var reservedBy: String? = null
+    private var isAdmin: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +24,10 @@ class CarDetailsActivity : AppCompatActivity() {
 
         carId = intent.getStringExtra("carId")
         reservedBy = intent.getStringExtra("reservedBy")
+
+        // Определяем, является ли текущий пользователь администратором
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        isAdmin = currentUserId == "adminUserId" // Укажите реальный ID администратора
 
         if (carId != null) {
             loadCarDetails(carId!!)
@@ -31,6 +38,76 @@ class CarDetailsActivity : AppCompatActivity() {
         } else {
             binding.tvReservedBy.text = "Машина не забронирована"
         }
+
+        setupButtons()
+    }
+
+    private fun setupButtons() {
+        // Кнопка "Скрыть машину" и "Удалить машину" только для администратора
+        if (isAdmin) {
+            binding.btnHideCar.visibility = View.VISIBLE
+            binding.btnDeleteCar.visibility = View.VISIBLE
+        }
+
+        // Кнопка "Отменить бронирование" видна, если машина забронирована
+        if (reservedBy != null) {
+            binding.btnCancelReservation.visibility = View.VISIBLE
+        }
+
+        // Обработчики кнопок
+        binding.btnCancelReservation.setOnClickListener {
+            cancelReservation()
+        }
+
+        binding.btnHideCar.setOnClickListener {
+            hideCar()
+        }
+
+        binding.btnDeleteCar.setOnClickListener {
+            deleteCar()
+        }
+    }
+
+    private fun cancelReservation() {
+        if (carId == null) return
+
+        database = FirebaseDatabase.getInstance().getReference("cars").child(carId!!)
+        database.child("reservedBy").setValue(null)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Бронирование отменено", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { error ->
+                Toast.makeText(this, "Ошибка: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun hideCar() {
+        if (carId == null) return
+
+        database = FirebaseDatabase.getInstance().getReference("cars").child(carId!!)
+        database.child("isHidden").setValue(true)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Машина скрыта", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { error ->
+                Toast.makeText(this, "Ошибка: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun deleteCar() {
+        if (carId == null) return
+
+        database = FirebaseDatabase.getInstance().getReference("cars").child(carId!!)
+        database.removeValue()
+            .addOnSuccessListener {
+                Toast.makeText(this, "Машина удалена", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener { error ->
+                Toast.makeText(this, "Ошибка: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun loadCarDetails(carId: String) {

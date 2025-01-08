@@ -6,58 +6,102 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Название машины -->
     <TextView
-        android:id="@+id/tvCarName"
+        android:id="@+id/carName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Название машины"
+        android:text="Car Name"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
 
+    <!-- Год -->
     <TextView
-        android:id="@+id/tvCarYear"
+        android:id="@+id/carYear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Год: 2022" />
+        android:text="Year"
+        android:layout_marginBottom="4dp" />
 
+    <!-- Цена -->
     <TextView
-        android:id="@+id/tvCarPrice"
+        android:id="@+id/carPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Цена: 100 $" />
+        android:text="Price"
+        android:layout_marginBottom="4dp" />
 
+    <!-- Цвет -->
     <TextView
-        android:id="@+id/tvCarColor"
+        android:id="@+id/carColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Цвет: Красный" />
+        android:text="Color"
+        android:layout_marginBottom="4dp" />
 
+    <!-- Пробег -->
     <TextView
-        android:id="@+id/tvCarMileage"
+        android:id="@+id/carMileage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Пробег: 15000 км" />
+        android:text="Mileage"
+        android:layout_marginBottom="8dp" />
 
-    <!-- Кнопка "Подробнее" -->
+    <!-- Забронировано пользователем -->
+    <TextView
+        android:id="@+id/reservedByText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Забронировано: Иван Иванов"
+        android:visibility="gone"
+        android:layout_marginTop="8dp" />
+
+    <!-- Кнопки -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <!-- Кнопка Подробнее -->
+        <Button
+            android:id="@+id/detailsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Подробнее"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Кнопка Забронировать -->
+        <Button
+            android:id="@+id/bookButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Забронировать"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Кнопка Отменить бронирование -->
+        <Button
+            android:id="@+id/cancelReservationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Отменить"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Кнопка Скрыть (для админов) -->
     <Button
-        android:id="@+id/btnDetails"
+        android:id="@+id/hideButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Подробнее" />
-
-    <!-- Кнопка "Забронировать" -->
-    <Button
-        android:id="@+id/btnBook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Забронировать"
+        android:text="Скрыть"
         android:visibility="gone" />
 
-    <!-- Кнопка "Отменить бронирование" -->
+    <!-- Кнопка Удалить (для админов) -->
     <Button
-        android:id="@+id/btnCancelReservation"
+        android:id="@+id/deleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Отменить бронирование"
+        android:text="Удалить"
         android:visibility="gone" />
 </LinearLayout>

@@ -2,7 +2,7 @@ package com.example.myapplication.models
 
 data class User(
     val id: String = "",
-    val name: String = "",
     val email: String = "",
-    val role: String = "user"
+    val name: String = "",
+    val role: String = "user" // Значение по умолчанию
 )
